@@ -1,7 +1,13 @@
+from pathlib import Path
+
 import pandas as pd
+import streamlit as st
 
 
-# TODO: adicionar @st.cache_data (import streamlit as st) para evitar reler o CSV a cada interação
-def load_data(path="data/clean/dataset.csv"):
-    """Lê o dataset já tratado (exportado ao final do notebook de EDA)."""
-    return pd.read_csv(path)
+@st.cache_data(ttl=300, max_entries=4)
+def load_data(path="data/clean/futebol.csv"):
+    """Lê o futebol tratado; caminhos relativos partem da raiz do projeto."""
+    arquivo = Path(path)
+    if not arquivo.is_absolute():
+        arquivo = Path(__file__).resolve().parent.parent / arquivo
+    return pd.read_csv(arquivo)
