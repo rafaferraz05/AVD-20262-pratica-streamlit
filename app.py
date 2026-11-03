@@ -1,9 +1,12 @@
+import hashlib
+
 import pandas as pd
 import streamlit as st
 
 from src.data_loader import load_data
 from src.estatistica import correlacoes_spearman
-from src.graficos import histograma, mapa_correlacao
+from src.graficos import barras_ranking, histograma, mapa_correlacao
+from src.metricas import COLUNAS, calcular_metricas, filtrar_jogadores, top_jogadores
 from src.pictogramas import chuteira_svg, cartao_svg, gol_svg
 
 
@@ -26,7 +29,10 @@ NOMES = {
     "Total_Cmp%": "Acerto de passes (%)",
 }
 
-colunas_necessarias = set(VARS_QUANT + ["season", "league", "team", "perfil"])
+colunas_necessarias = set(VARS_QUANT + [
+    "season", "league", "team", "perfil", "player", "born_", "Standard_Sh", "Standard_SoT",
+    *COLUNAS.values(),
+])
 if not colunas_necessarias.issubset(df.columns):
     st.error("O CSV não corresponde ao futebol tratado. Confira a exportação do notebook.")
     st.stop()
@@ -35,6 +41,10 @@ if not colunas_necessarias.issubset(df.columns):
 def nome_temporada(temporada):
     codigo = str(int(temporada))
     return f"20{codigo[:2]}/{codigo[2:]}"
+
+
+def numero(valor):
+    return "—" if valor is None else f"{valor:,.0f}".replace(",", ".")
 
 
 with st.sidebar:
@@ -155,41 +165,79 @@ with aba1:
 
 with aba2:
     st.header("Dashboard 2 · Indicadores de futebol")
-    st.info("Rascunho visual: as figuras mostram o layout planejado. Os valores e preenchimentos serão calculados na etapa de KPIs.")
+    st.caption("Temporada, ligas e clubes controlam este painel. Os intervalos do Dashboard 1 não são aplicados aqui.")
+    # Reserva o topo: a seleção no gráfico abaixo também atualizará estas áreas.
+    espaco_metricas = st.container()
+    espaco_gol = st.container()
+    st.subheader("Comparar jogadores · top 5")
+    opcoes = {"gols": "Gols", "amarelos": "Cartões amarelos", "vermelhos": "Cartões vermelhos"}
+    cores = {"gols": "#15803d", "amarelos": "#ca8a04", "vermelhos": "#dc2626"}
+    metrica_ranking = st.selectbox(
+        "Ordenar jogadores por", list(opcoes), format_func=opcoes.get, key="metrica_ranking",
+    )
+    ranking_barras = top_jogadores(df_base, metrica_ranking)
+    selecionados = []
+    if not ranking_barras.empty:
+        contexto = repr((int(temporada), sorted(ligas), sorted(clubes), metrica_ranking))
+        chave_grafico = "ranking_" + hashlib.sha256(contexto.encode()).hexdigest()[:16]
+        evento = st.altair_chart(
+            barras_ranking(ranking_barras, COLUNAS[metrica_ranking], opcoes[metrica_ranking], cores[metrica_ranking]),
+            key=chave_grafico, on_select="rerun", selection_mode="jogador", width="stretch",
+            alt=f"Cinco jogadores com os maiores totais de {opcoes[metrica_ranking]} no recorte.",
+        )
+        selecionados = [item["identidade"] for item in evento.selection.get("jogador", [])]
+        st.caption("Clique em uma barra para filtrar os indicadores e as figuras. Shift + clique seleciona mais jogadores; dois cliques no gráfico limpam a seleção.")
+    else:
+        st.info("Não há valores positivos conhecidos para este ranking no recorte.")
 
-    with st.container(border=True):
+    dados_indicadores = filtrar_jogadores(df_base, selecionados)
+    valores = calcular_metricas(dados_indicadores)
+    with espaco_metricas:
+        st.caption("Indicadores dos jogadores selecionados nas barras." if selecionados
+                   else "Indicadores de todos os jogadores no recorte da lateral.")
+        with st.container(horizontal=True):
+            pontaria = "—" if valores["pontaria"] is None else f"{valores['pontaria']:.1f}%".replace(".", ",")
+            st.metric("Chutes no alvo", pontaria, border=True)
+            st.metric("Gols", numero(valores["gols"]), border=True)
+            st.metric("Cartões amarelos", numero(valores["amarelos"]), border=True)
+            st.metric("Cartões vermelhos", numero(valores["vermelhos"]), border=True)
+        if any(valores["ausentes"].values()):
+            st.warning("Há contagens ausentes. Os totais usam somente valores conhecidos; uma contagem inteiramente desconhecida aparece como —.")
+
+    with espaco_gol, st.container(border=True):
         texto, desenho = st.columns([1, 2])
         with texto:
             st.subheader("Chutes no alvo")
-            st.metric("Percentual de acerto", "—")
-            st.caption("Chutes no alvo ÷ total de chutes × 100. O percentual preencherá o desenho do gol.")
+            st.markdown(f"**{pontaria}**")
+            st.caption("Chutes no alvo ÷ total de chutes × 100. Não é o percentual de gols.")
+            unidade_registro = "registro" if valores["linhas_chutes"] == 1 else "registros"
+            st.caption(f"Base válida: {numero(valores['chutes_alvo'])} no alvo / {numero(valores['chutes'])} chutes; {valores['linhas_chutes']:,} {unidade_registro}.")
+            if valores["pontaria"] is None:
+                st.info("Sem chutes válidos para calcular o percentual neste recorte.")
         with desenho:
-            st.image(gol_svg(), width="stretch", alt="Rascunho de um gol com rede, ainda sem preenchimento de dados.")
-        # TODO: razão dos totais de Standard_SoT e Standard_Sh no recorte; sem chutes = indefinido.
+            fracao = 0 if valores["pontaria"] is None else valores["pontaria"] / 100
+            st.image(gol_svg(fracao), width="stretch", alt=f"Gol preenchido conforme o percentual de chutes no alvo: {pontaria}.")
 
-    st.subheader("Top 5 · Jogadores com mais gols")
-    for posicao, coluna in enumerate(st.columns(5), start=1):
-        with coluna, st.container(border=True):
-            st.markdown(f"**{posicao}º lugar**")
-            st.image(chuteira_svg(), width="stretch", alt=f"Chuteira reservada ao {posicao}º jogador do ranking de gols.")
-            st.caption("Jogador a calcular")
-            st.metric("Gols", "—")
-
-    for titulo, cor, tipo in [
-        ("Top 5 · Cartões amarelos", "#eab308", "amarelos"),
-        ("Top 5 · Cartões vermelhos", "#dc2626", "vermelhos"),
-    ]:
-        st.subheader(titulo)
-        for posicao, coluna in enumerate(st.columns(5), start=1):
+    for tipo in ["gols", "amarelos", "vermelhos"]:
+        st.subheader("Top 5 · " + opcoes[tipo])
+        ranking = top_jogadores(dados_indicadores, tipo)
+        if ranking.empty:
+            st.info("Nenhum jogador com valor positivo conhecido neste ranking.")
+            continue
+        campo = COLUNAS[tipo]
+        lider = float(ranking.iloc[0][campo])
+        st.caption(f"Altura do preenchimento relativa ao líder deste ranking: {numero(lider)}. Empates são ordenados por nome e ano de nascimento; limite de cinco jogadores.")
+        for posicao, (coluna, (_, jogador)) in enumerate(zip(st.columns(len(ranking)), ranking.iterrows()), start=1):
             with coluna, st.container(border=True):
                 st.markdown(f"**{posicao}º lugar**")
-                st.image(cartao_svg(cor), width="stretch", alt=f"Cartão reservado ao {posicao}º jogador do ranking de cartões {tipo}.")
-                st.caption("Jogador a calcular")
-                st.metric("Cartões", "—")
-
-    st.caption("Escala planejada: o líder de cada ranking terá a figura cheia; os demais, preenchimento proporcional. Os números reais aparecerão junto das figuras.")
-    # TODO: somar por jogador antes de selecionar o top 5; considerar transferências e homônimos.
-    # TODO: calcular cada ranking separadamente, tratar empates e ausência de valores positivos.
+                quantidade = float(jogador[campo])
+                unidade = ({"gols": "gol", "amarelos": "cartão amarelo", "vermelhos": "cartão vermelho"}[tipo]
+                           if quantidade == 1 else opcoes[tipo].lower())
+                figura = chuteira_svg(quantidade / lider) if tipo == "gols" else cartao_svg(cores[tipo], quantidade / lider)
+                st.image(figura, width="stretch", alt=f"{jogador['rotulo']}: {numero(quantidade)} {unidade}.")
+                st.text(jogador["rotulo"])
+                st.markdown(f"**{numero(quantidade)} {unidade}**")
+    st.caption("Os registros do mesmo jogador são somados por nome e ano de nascimento, reunindo transferências. Totais não são taxas por partida e não determinam, sozinhos, quem é o melhor jogador.")
 
 with st.expander("Dados do recorte selecionado"):
     st.dataframe(

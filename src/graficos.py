@@ -45,3 +45,14 @@ def histograma(df, variavel, nome, separar=False):
                      alt.Tooltip("count():Q", title="Registros", format=".0f")],
         )
     return grafico.properties(height=340)
+
+
+def barras_ranking(ranking, coluna, nome, cor):
+    selecao = alt.selection_point(name="jogador", fields=["identidade"], clear="dblclick")
+    return (alt.Chart(ranking).mark_bar(color=cor).encode(
+        x=alt.X(field=coluna, type="quantitative", title=nome, axis=alt.Axis(tickMinStep=1)),
+        y=alt.Y("rotulo:N", title=None, sort=ranking["rotulo"].tolist(), axis=alt.Axis(labelLimit=240)),
+        opacity=alt.condition(selecao, alt.value(1), alt.value(0.3)),
+        tooltip=[alt.Tooltip("rotulo:N", title="Jogador"),
+                 alt.Tooltip(field=coluna, type="quantitative", title=nome, format=".0f")],
+    ).add_params(selecao).properties(height=260))
