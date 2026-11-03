@@ -22,7 +22,7 @@ Artefatos de entrega que não são sobre uso de IA (isso fica em [`prompts/`](..
 - [ ] Os dois rascunhos
 - [x] `justificativa-metricas.md` completo
 
-Estado da parte 3: existe um esquema digital em `rascunho-dashboard1.png`, explicitamente elaborado depois do código. Ele documenta o layout final, mas não comprova o planejamento anterior exigido na Aula 21. A foto original do Dashboard 2 está preservada. A publicação, a URL no README e o teste do app público continuam pendentes; veja `checklist-parte3.md`.
+Estado da parte 3: existe um esquema digital em `rascunho-dashboard1.png`, explicitamente elaborado depois do código. Ele documenta o layout final, mas não comprova o planejamento anterior exigido na Aula 21. A foto original do Dashboard 2 está preservada. O app está publicado, com URL no README e teste em sessão sem login; veja `checklist-parte3.md` e `revisao-publicacao.md` para evidências e pendências do aluno.
 
 ## Modelo de `justificativa-metricas.md`
 

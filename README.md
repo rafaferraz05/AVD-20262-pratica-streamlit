@@ -32,7 +32,7 @@ python -m pip install -r requirements-dev.txt
 python -m unittest discover -s tests -v
 ```
 
-O teste de interface usa o AppTest do Streamlit e precisa de conexão interna local no Windows. Não envia dados para serviços externos. A implementação da parte 3 está preparada localmente; a publicação e o teste público ainda dependem da autenticação do aluno no Streamlit Cloud. Consulte `entregas/checklist-parte3.md`.
+O teste de interface usa o AppTest do Streamlit e precisa de conexão interna local no Windows. Não envia dados para serviços externos. O app está publicado no Streamlit Community Cloud e foi aberto em uma sessão de navegador sem login em 03/11/2026. As abas, filtros e seleção de jogador foram conferidos na aplicação pública. Consulte `entregas/checklist-parte3.md` e `entregas/revisao-publicacao.md` para as evidências e pendências acadêmicas.
 
 Repositório-modelo das Aulas 21, 22 e 23: construção de dois dashboards em Streamlit a partir da EDA desenvolvida em sala. O deploy dos dashboards ocorrerá via Streamlit Community Cloud e serão os seguintes:
 
@@ -106,7 +106,7 @@ streamlit run app.py
 
 O passo a passo detalhado de cada aula (Aulas 21, 22 e 23), com pré-requisitos e objetivos, está em [ROTEIRO.md](ROTEIRO.md). Comece por ele depois do Setup.
 
-**Link do app (Aula 23):** _(preencher após o deploy)_
+**Link do app (Aula 23):** [Abrir os dashboards de futebol](https://avd-20262-pratica-app-hhtks5cg2embjiatbgns4y.streamlit.app/)
 
 ## IA neste projeto
 

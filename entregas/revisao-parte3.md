@@ -4,7 +4,7 @@ Um agente separado, sem histórico da implementação, leu as 16 páginas de `AV
 
 ## Parecer
 
-**Implementação local validada; entrega acadêmica final ainda incompleta por publicação e pendências do aluno.** Não foi identificado novo bloqueio técnico no código local auditado. Não há garantia de nota ou de ausência absoluta de defeitos.
+**Implementação local validada.** Este relatório registra a auditoria anterior à publicação. Deploy e envio do código foram concluídos posteriormente; a atualização está em `revisao-publicacao.md`. As pendências acadêmicas de declaração de IA e procedência do rascunho do D1 permanecem. Não há garantia de nota ou de ausência absoluta de defeitos.
 
 ## Evidências independentes
 
@@ -19,7 +19,7 @@ Um agente separado, sem histórico da implementação, leu as 16 páginas de `AV
 - Nenhum padrão comum de segredo ou chave privada foi encontrado nos arquivos versionados. A varredura por padrões não é garantia absoluta.
 - Declaração de IA intacta: SHA-256 `8777bcc2347b4964e1bb930bef37828da519b0d9977321bb4e34c817318f97cd`.
 
-## Achados e providências
+## Achados e providências na auditoria anterior ao deploy
 
 1. **Publicação pendente (bloqueio da entrega final):** a conta do Streamlit estava sem sessão. Deploy, URL real no README e teste em janela anônima não foram atestados. Não se deve apresentar o app como publicado antes dessas verificações.
 2. **Commit/push:** na auditoria, as correções da parte 3 ainda não estavam no GitHub. O fechamento do implementador deve enviar os arquivos revisados; o histórico registra essa operação separadamente da auditoria.
@@ -29,4 +29,4 @@ Um agente separado, sem histórico da implementação, leu as 16 páginas de `AV
 
 ## Limites
 
-O revisor não executou instalação limpa, não refez toda a EDA nesta auditoria e não realizou cliques reais nem teste do app publicado. AppTest não substitui o teste público da professora. A ausência de URL real impede declarar a entrega final concluída.
+O revisor desta primeira auditoria não executou instalação limpa, não refez toda a EDA e não realizou cliques reais nem teste do app publicado. AppTest não substitui o teste público da professora. A URL foi fornecida posteriormente pelo aluno e testada pelo implementador, conforme `revisao-publicacao.md`; isso não altera retroativamente o escopo da primeira auditoria.

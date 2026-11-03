@@ -19,17 +19,18 @@ Referências: `AVD3.pdf` (16 páginas) e a atividade “Prática - Streamlit” 
 
 `rascunho-dashboard2.png` é a foto fornecida pelo aluno. `rascunho-dashboard1.png` é um esquema digital do layout, elaborado nesta etapa final; não é apresentado como foto ou evidência de desenho feito antes da implementação. Se a professora exigir especificamente essa evidência anterior, o aluno deverá fornecer seu material original.
 
-## Publicação — ainda pendente de autenticação
+## Publicação — atualizada em 03/11/2026
 
-- [ ] Login do aluno no Streamlit Community Cloud e autorização do repositório.
-- [ ] Criar app público do repositório `rafaferraz05/AVD-20262-pratica-streamlit`, branch `main`, arquivo `app.py`.
-- [ ] Escolher Python compatível, preferencialmente 3.13, conforme as opções disponíveis no serviço.
-- [ ] Aguardar o deploy e copiar a URL efetivamente fornecida pelo serviço.
-- [ ] Inserir essa URL real no README; não usar endereço presumido como se já estivesse publicado.
-- [ ] Abrir o app sem sessão/autenticação e testar widgets e ambas as abas.
-- [ ] Conferir que a URL do README aponta para a aplicação publicada.
+- [x] Login e criação do app concluídos pelo aluno no Streamlit Community Cloud.
+- [x] App do projeto publicado e acessível sem solicitar login.
+- [x] Serviço executando o app; a versão exata do Python na nuvem não foi inspecionada nesta auditoria.
+- [x] URL real fornecida pelo aluno e aberta na revisão: https://avd-20262-pratica-app-hhtks5cg2embjiatbgns4y.streamlit.app/
+- [x] URL real inserida no README.
+- [x] Ambas as abas e controles conferidos em sessão separada de navegador, sem usar o login do Edge do aluno. Evidências em `revisao-publicacao.md`.
+- [x] Endereço do README corresponde ao app efetivamente aberto.
+- [ ] Aluno repetir o teste em uma janela anônima do próprio navegador, conforme o enunciado.
 
-O acesso à conta, o aceite dos termos e eventuais permissões do GitHub devem ser concluídos pelo aluno. A página foi encontrada sem sessão autenticada durante a preparação desta entrega.
+A publicação deixou de ser uma pendência. O teste sem login foi realizado pelo navegador de revisão; ele não é apresentado como abertura literal de uma janela anônima do Edge. A confirmação final dessa etapa fica com o aluno.
 
 ## Declaração de uso de IA
 
