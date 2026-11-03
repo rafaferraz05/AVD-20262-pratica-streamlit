@@ -2,6 +2,37 @@
 
 Repositório utilizado para aula prática relacionada a Streamlit na disciplina Análise e Visualização de Dados da Cesar School no período de 2026.2.
 
+## Projeto de futebol — parte 2
+
+O aplicativo do aluno usa `data/clean/futebol.csv`, com **22.414 registros e 181 colunas**. Cada registro corresponde a um jogador em um clube e temporada. O arquivo `data/clean/dataset.csv` é uma cópia compatível da mesma base tratada; o dado bruto pertence a `data/raw/` e não é enviado ao Git.
+
+- **Dashboard 1:** correlação de Spearman, histograma, comparação Atacante × Demais e filtros de intervalo. Os filtros de intervalo afetam somente esse dashboard.
+- **Dashboard 2:** quatro indicadores (pontaria, gols, amarelos e vermelhos), top 5 por jogador em barras Altair e os desenhos do rascunho preenchidos pelos valores. Selecionar barras atualiza os indicadores e as figuras; dois cliques limpam a seleção.
+- **Filtros compartilhados:** uma temporada, ligas e clubes. Deixar Clubes vazio inclui todos os clubes das ligas escolhidas.
+
+No Windows, também é possível executar sem ativar o ambiente no terminal:
+
+```powershell
+.\.venv\Scripts\python.exe -m streamlit run app.py
+```
+
+### Conferir a entrega
+
+- `notebooks/eda.ipynb`: cópia sem alteração da análise original do aluno (`Cópia_de_Aula_11_Prática_EDA.ipynb`).
+- `notebooks/eda-com-downloads.ipynb`: versão de futebol com exportação dos arquivos; o exemplo de EDA da professora permanece em `arquivo-eda-original.ipynb`.
+- `notebooks/validacao-metricas.ipynb`: cálculos e gráfico prévio executados para a parte 2.
+- `entregas/rascunho-dashboard2.png` e `entregas/justificativa-metricas.md`: planejamento e justificativas dos quatro indicadores.
+- `entregas/checklist-parte2.md`: evidências e pendências documentais.
+
+Testes automatizados (com o Python do ambiente):
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m unittest discover -s tests -v
+```
+
+O teste de interface usa o AppTest do Streamlit e precisa de conexão interna local no Windows. Não envia dados para serviços externos. A publicação do aplicativo será tratada na parte 3.
+
 Repositório-modelo das Aulas 21, 22 e 23: construção de dois dashboards em Streamlit a partir da EDA desenvolvida em sala. O deploy dos dashboards ocorrerá via Streamlit Community Cloud e serão os seguintes:
 
 - Dashboard 1 = correlação + distribuição das variáveis quantitativas

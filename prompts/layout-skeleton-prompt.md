@@ -10,7 +10,7 @@ Projeto da disciplina Análise e Visualização de Dados. Adaptar o esqueleto de
 
 Referência do Dashboard 1: `entregas/prof_rascunho_dashboard1.png`, exemplo da professora, com sidebar, correlação à esquerda e distribuição à direita. Ainda não foi fornecido um rascunho próprio do aluno para essa primeira tela.
 
-Rascunho próprio do Dashboard 2: `prompts/rascunho_dashboard2.png`. Criar uma segunda tela com um gol, cinco chuteiras para artilheiros e duas fileiras de cinco cartões (amarelos e vermelhos). As regras planejadas estão em `prompts/dashboard2-layout-prompt.md`.
+Rascunho próprio do Dashboard 2: `entregas/rascunho-dashboard2.png`. Criar uma segunda tela com um gol, cinco chuteiras para artilheiros e duas fileiras de cinco cartões (amarelos e vermelhos). As regras planejadas estão em `prompts/dashboard2-layout-prompt.md`.
 
 <!-- Opcional, se a ferramenta de IA não aceitar imagem ou interpretar mal o rascunho: descreva o layout em poucas linhas (ex.: sidebar à esquerda com 2 filtros; topo com 3 métricas; abaixo, 2 gráficos lado a lado). -->
 

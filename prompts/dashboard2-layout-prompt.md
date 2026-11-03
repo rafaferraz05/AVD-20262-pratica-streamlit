@@ -6,7 +6,7 @@ Projeto da disciplina Análise e Visualização de Dados, baseado na EDA de joga
 
 ## Entrada
 
-Rascunho original do aluno: [rascunho_dashboard2.png](rascunho_dashboard2.png).
+Rascunho original do aluno: [rascunho-dashboard2.png](../entregas/rascunho-dashboard2.png).
 
 Fonte dos dados tratados: `data/clean/futebol.csv`.
 
