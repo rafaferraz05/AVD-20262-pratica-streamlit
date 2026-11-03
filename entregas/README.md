@@ -14,13 +14,15 @@ Artefatos de entrega que não são sobre uso de IA (isso fica em [`prompts/`](..
 
 ## Checklist — Aula 22
 
-- [ ] `rascunho-dashboard2.jpg`/`.png`
-- [ ] `justificativa-metricas.md` preenchido (não só criado vazio)
+- [x] `rascunho-dashboard2.jpg`/`.png`
+- [x] `justificativa-metricas.md` preenchido (não só criado vazio)
 
 ## Checklist — entrega final (Aula 23)
 
 - [ ] Os dois rascunhos
-- [ ] `justificativa-metricas.md` completo
+- [x] `justificativa-metricas.md` completo
+
+Estado da parte 3: existe um esquema digital em `rascunho-dashboard1.png`, explicitamente elaborado depois do código. Ele documenta o layout final, mas não comprova o planejamento anterior exigido na Aula 21. A foto original do Dashboard 2 está preservada. A publicação, a URL no README e o teste do app público continuam pendentes; veja `checklist-parte3.md`.
 
 ## Modelo de `justificativa-metricas.md`
 

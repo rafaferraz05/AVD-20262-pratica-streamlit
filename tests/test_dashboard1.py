@@ -22,7 +22,7 @@ class Dashboard1Test(unittest.TestCase):
         app = iniciar()
         self.assertFalse(app.exception)
         self.assertEqual(len(app.tabs), 2)
-        for variaveis, quantidade in [([], 0), (["age_"], 1), (["age_", "Performance_Gls"], 2)]:
+        for variaveis, quantidade in [([], 0), (["age_"], 1), (["age_", "Performance_Gls"], 3)]:
             app.multiselect(key="variaveis").set_value(variaveis).run()
             self.assertFalse(app.exception)
             self.assertEqual(len(graficos_primeira_aba(app)), quantidade)

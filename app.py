@@ -142,19 +142,17 @@ with aba1:
     with col_distribuicao, st.container(border=True):
         st.subheader("Distribuição")
         if variaveis:
-            variavel_histograma = st.selectbox(
-                "Variável do histograma", variaveis,
-                format_func=NOMES.get, key="variavel_histograma",
-            )
-            validos = df_filtrado[variavel_histograma].notna().sum()
-            if validos:
-                st.altair_chart(
-                    histograma(df_filtrado, variavel_histograma, NOMES[variavel_histograma], separar_por_classe),
-                    width="stretch", alt=f"Distribuição de {NOMES[variavel_histograma]} no recorte selecionado.",
-                )
-                st.caption(f"{validos:,} valores conhecidos; {len(df_filtrado) - validos:,} ausentes não entram neste histograma.")
-            else:
-                st.warning("Nenhum valor conhecido para esta variável nos filtros selecionados.")
+            for variavel_histograma in variaveis:
+                st.markdown(f"**{NOMES[variavel_histograma]}**")
+                validos = df_filtrado[variavel_histograma].notna().sum()
+                if validos:
+                    st.altair_chart(
+                        histograma(df_filtrado, variavel_histograma, NOMES[variavel_histograma], separar_por_classe),
+                        width="stretch", alt=f"Distribuição de {NOMES[variavel_histograma]} no recorte selecionado.",
+                    )
+                    st.caption(f"{validos:,} valores conhecidos; {len(df_filtrado) - validos:,} ausentes não entram neste histograma.")
+                else:
+                    st.warning("Nenhum valor conhecido para esta variável nos filtros selecionados.")
         else:
             st.info("Selecione uma variável na barra lateral.")
     with st.expander("Dados usados nos gráficos do Dashboard 1"):
@@ -225,6 +223,11 @@ with aba2:
             st.info("Nenhum jogador com valor positivo conhecido neste ranking.")
             continue
         campo = COLUNAS[tipo]
+        if tipo != metrica_ranking:
+            st.altair_chart(
+                barras_ranking(ranking, campo, opcoes[tipo], cores[tipo], selecionavel=False),
+                width="stretch", alt=f"Ranking de jogadores por {opcoes[tipo].lower()} no recorte dos indicadores.",
+            )
         lider = float(ranking.iloc[0][campo])
         st.caption(f"Altura do preenchimento relativa ao líder deste ranking: {numero(lider)}. Empates são ordenados por nome e ano de nascimento; limite de cinco jogadores.")
         for posicao, (coluna, (_, jogador)) in enumerate(zip(st.columns(len(ranking)), ranking.iterrows()), start=1):

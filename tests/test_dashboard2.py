@@ -40,7 +40,7 @@ class Dashboard2Test(unittest.TestCase):
         app = AppTest.from_file(str(RAIZ / "app.py"), default_timeout=180).run()
         self.assertFalse(app.exception)
         graficos = [n for n in app.tabs[1] if n.type == "vega_lite_chart"]
-        self.assertEqual(len(graficos), 1)
+        self.assertEqual(len(graficos), 3)
         spec = json.loads(graficos[0].proto.spec)
         self.assertEqual(spec["params"][0]["name"], "jogador")
         self.assertEqual(spec["params"][0]["select"]["fields"], ["identidade"])
