@@ -2,6 +2,8 @@ import pandas as pd
 import streamlit as st
 
 from src.data_loader import load_data
+from src.estatistica import correlacoes_spearman
+from src.graficos import histograma, mapa_correlacao
 from src.pictogramas import chuteira_svg, cartao_svg, gol_svg
 
 
@@ -36,13 +38,7 @@ def nome_temporada(temporada):
 
 
 with st.sidebar:
-    st.header("Navegação")
-    dashboard = st.radio(
-        "Dashboard",
-        ["1 · Correlação e distribuição", "2 · Indicadores: meu rascunho"],
-        key="dashboard",
-    )
-    st.header("Filtros")
+    st.header("Filtros dos dois dashboards")
     temporada = st.selectbox(
         "Temporada",
         sorted(df["season"].dropna().unique(), reverse=True),
@@ -72,18 +68,21 @@ if df_base.empty:
     st.warning("Nenhum registro neste recorte. Selecione pelo menos uma liga ou ajuste os clubes.")
     st.stop()
 
-if dashboard.startswith("1"):
+aba1, aba2 = st.tabs(["Dashboard 1 · Correlação e distribuição", "Dashboard 2 · Indicadores"])
+
+with aba1:
     st.header("Dashboard 1 · Correlação e distribuição")
-    st.caption("Esqueleto da primeira entrega: selecione as variáveis e teste os filtros de intervalo.")
+    st.caption("Relações e distribuições das variáveis quantitativas da EDA de futebol.")
 
     with st.sidebar:
+        st.subheader("Apenas Dashboard 1")
         variaveis = st.multiselect(
             "Variáveis quantitativas", VARS_QUANT, default=VARS_QUANT,
             format_func=NOMES.get, key="variaveis",
         )
         separar_por_classe = st.toggle(
             "Distinguir atacantes das demais posições", key="separar_por_classe",
-            help="Planejado para colorir o histograma pela coluna perfil da EDA.",
+            help="Sobrepõe os histogramas das classes Atacante e Demais, definidas na EDA.",
         )
         intervalos = {}
         for var in variaveis:
@@ -116,28 +115,45 @@ if dashboard.startswith("1"):
         st.warning("Os intervalos selecionados não contêm registros. Amplie os filtros.")
 
     col_correlacao, col_distribuicao = st.columns([1, 1.5])
-    with col_correlacao, st.container(border=True, height=280):
-        st.subheader("Correlação")
+    with col_correlacao, st.container(border=True):
+        st.subheader("Correlação de Spearman")
         if len(variaveis) < 2:
             st.warning("Selecione pelo menos duas variáveis para a correlação.")
         else:
-            st.info("Espaço reservado para a matriz de correlação.")
-        # TODO: calcular Spearman, como na EDA, e desenhar o heatmap na etapa de gráficos.
-    with col_distribuicao, st.container(border=True, height=280):
+            correlacoes = correlacoes_spearman(df_filtrado, variaveis)
+            if correlacoes.empty:
+                st.warning("Não há pares com ao menos 3 observações válidas e valores distintos para calcular a correlação.")
+            else:
+                st.altair_chart(
+                    mapa_correlacao(correlacoes, variaveis, NOMES), width="stretch",
+                    alt="Correlação de Spearman entre as variáveis de futebol selecionadas.",
+                )
+                st.caption("Triângulo inferior, sem a diagonal. Pares sem variação ou com menos de 3 observações são omitidos. Correlação não implica causalidade.")
+    with col_distribuicao, st.container(border=True):
         st.subheader("Distribuição")
         if variaveis:
             variavel_histograma = st.selectbox(
                 "Variável do histograma", variaveis,
                 format_func=NOMES.get, key="variavel_histograma",
             )
-            st.info("Espaço reservado para o histograma.")
-            if separar_por_classe:
-                st.caption("Comparação planejada: Atacante × Demais.")
+            validos = df_filtrado[variavel_histograma].notna().sum()
+            if validos:
+                st.altair_chart(
+                    histograma(df_filtrado, variavel_histograma, NOMES[variavel_histograma], separar_por_classe),
+                    width="stretch", alt=f"Distribuição de {NOMES[variavel_histograma]} no recorte selecionado.",
+                )
+                st.caption(f"{validos:,} valores conhecidos; {len(df_filtrado) - validos:,} ausentes não entram neste histograma.")
+            else:
+                st.warning("Nenhum valor conhecido para esta variável nos filtros selecionados.")
         else:
             st.info("Selecione uma variável na barra lateral.")
-        # TODO: histograma de df_filtrado; usar perfil quando separar_por_classe estiver ativo.
+    with st.expander("Dados usados nos gráficos do Dashboard 1"):
+        st.dataframe(
+            df_filtrado[["player", "team", "league", *VARS_QUANT]], hide_index=True,
+            column_config=NOMES, key="dados_dashboard1", alt="Registros após os filtros do Dashboard 1.",
+        )
 
-else:
+with aba2:
     st.header("Dashboard 2 · Indicadores de futebol")
     st.info("Rascunho visual: as figuras mostram o layout planejado. Os valores e preenchimentos serão calculados na etapa de KPIs.")
 
@@ -176,8 +192,8 @@ else:
     # TODO: calcular cada ranking separadamente, tratar empates e ausência de valores positivos.
 
 with st.expander("Dados do recorte selecionado"):
-    dados_exibidos = df_filtrado if dashboard.startswith("1") else df_base
     st.dataframe(
-        dados_exibidos[["player", "team", "league", *VARS_QUANT]],
-        hide_index=True, column_config=NOMES,
+        df_base[["player", "team", "league", *VARS_QUANT]],
+        hide_index=True, column_config=NOMES, key="dados_recorte",
+        alt="Registros após os filtros compartilhados de temporada, liga e clube.",
     )
